@@ -26,13 +26,24 @@ SOFTWARE
 import discord
 from discord.ext import commands
 
-#Command prefix for interfacing with bot in discord 
-bot = commands.Bot(command_prefix='/')
+myself = '''I.... Am Bottinsation....
+         Leader of the Discord Bots'''
 
-#Test command (delete later or modify)
+#Command prefix for interfacing with bot in discord 
+bot = commands.Bot(command_prefix='/', description = myself)
+
+#Bot readout / Login descriptor
+@bot.event
+async def on_ready():
+    print('Logged in as')
+    print(bot.user.name)
+    print(bot.user.id)
+
+#User initiated command to send some pinoy trashtalk
 @bot.command()
-async def ping(ctx):
-    await ctx.send('pong')
+async def pinoy(ctx, member: discord.Member):
+    ctx.send = ('{0.name} is a goblok anjing'.format(member))
 
 #Run bot (String is bot token)
+#Fake token here because repo is public
 bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XReBTw.XLtcKlYA3N0ohVq4QIRcP_E4KYI')
