@@ -22,8 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE
 '''
 
-#Library Imports
+#Importing discord.py API
 import discord
+#Specific Imports from discord api to enable bot commands
 from discord.ext import commands
 
 myself = '''I.... Am Bottinsation....
