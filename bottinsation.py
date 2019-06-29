@@ -29,7 +29,7 @@ from discord.ext import commands
 #Command prefix for interfacing with bot in discord 
 bot = commands.Bot(command_prefix='/')
 
-#Test command
+#Test command (delete later or modify)
 @bot.command()
 async def ping(ctx):
     await ctx.send('pong')
