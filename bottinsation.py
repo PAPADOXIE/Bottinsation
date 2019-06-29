@@ -45,6 +45,20 @@ async def on_ready():
 async def pinoy(ctx, member: discord.Member):
     ctx.send = ('{0.name} is a goblok anjing'.format(member))
 
+#User initiated command to do a basic arithimatic calculation
+@bot.command    
+async def calc(ctx, num1:int, num2:int, op:chr):
+    if op == '+':
+        await ctx.send(num1 + num2) 
+    elif op == '-':
+        await ctx.send(num1 - num2) 
+    elif op == 'x' or op == '*':
+        await ctx.send(num1 * num2)
+    elif op == '/':
+        await ctx.send(num1 / num2)
+    else: 
+         ctx.send('Invalid operator. Go back to kindergarten') 
+
 #Run bot (String is bot token)
 #Fake token here because repo is public
 bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XReBTw.XLtcKlYA3N0ohVq4QIRcP_E4KYI')
