@@ -22,8 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE
 '''
 
-#Importing discord.py API
+#Importing APIs
 import discord
+import youtube_dl
+import asyncio
+
 #Specific Imports from discord api to enable bot commands
 from discord.ext import commands
 
@@ -58,6 +61,14 @@ async def calc(ctx, num1:int, op:chr, num2:int):
         await ctx.send(num1 / num2)
     else: 
          ctx.send('Invalid operator. Go back to kindergarten') 
+
+
+#MUSIC
+
+
+
+
+
 
 #Run bot (String is bot token)
 #Fake token here because repo is public
