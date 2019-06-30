@@ -27,9 +27,6 @@ import discord
 #Specific Imports from discord api to enable bot commands
 from discord.ext import commands
 
-#Startup extensions
-startup_extensions = ['mp4']
-
 myself = '''I.... Am Bottinsation....
          Leader of the Discord Bots'''
 
