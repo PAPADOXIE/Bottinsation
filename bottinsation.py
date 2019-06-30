@@ -34,7 +34,7 @@ myself = '''I.... Am Bottinsation....
          Leader of the Discord Bots'''
 
 #Command prefix for interfacing with bot in discord 
-bot = commands.Bot(command_prefix='/', description = myself)
+bot = commands.Bot(command_prefix='?', description = myself)
 
 #Bot readout / Login descriptor
 @bot.event
@@ -90,10 +90,70 @@ ffmpeg_options = {
     'options': '-vn'
 }
 
+#Applying youtube_dl format options
+ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
 
+#Volume control for bot
+class YTDLSource(discord.PCMVolumeTransformer):
+    def __init__(self, source, *, data, volume=1.0):
+        super().__init__(source, volume)
+
+        self.data = data
+
+        self.title = data.get('title')
+        self.url = data.get('url')
+
+    @classmethod
+    async def from_url(cls, url, *, loop=None, stream=False):
+        loop = loop or asyncio.get_event_loop()
+        data = await loop.run_in_executor(None, lambda: ytdl.extract_info(url, download=not stream))
+
+        if 'entries' in data:
+            # take first item from a playlist
+            data = data['entries'][0]
+
+        filename = data['url'] if stream else ytdl.prepare_filename(data)
+        return cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)
+
+#Class for accepting music commands and initializing bot for music 
+class Music(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+#Move bot to voice channel where the user who initiated command is 
+    @commands.command()
+    async def join(self, ctx, *, channel: discord.VoiceChannel):
+        if ctx.voice_client is not None:
+            return await ctx.voice_client.move_to(channel)
+
+        await channel.connect()
+
+#Stream from Youtube
+    @commands.command()
+    async def play(self, ctx, *, url):
+        async with ctx.typing():
+            player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True)
+            ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
+
+        await ctx.send('Now playing: {}'.format(player.title))
+
+#Stop playing
+    @commands.command()
+    async def stop(self, ctx):
+        await ctx.voice_client.stop()
+
+#Pause playing
+    @commands.command()
+    async def pause(self, ctx):
+        await ctx.voice_client.pause()
+
+#Disconnect from voice channel 
+    @commands.command()
+    async def leave(self, ctx):
+        await ctx.voice_client.disconnect()
 
 
 
 #Run bot (String is bot token)
 #Fake token here because repo is public
-bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XReBTw.XLtcKlYA3N0ohVq4QIRcP_E4KYI')
+bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XRiugg.ZbjFe8rsWgdkY3zNBgqSz4Mu0F4')
