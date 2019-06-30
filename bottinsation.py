@@ -43,6 +43,8 @@ async def on_ready():
     print(bot.user.name)
     print(bot.user.id)
 
+#MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC  
+
 #User initiated command to send some pinoy trashtalk
 @bot.command()
 async def pinoy(ctx, member: discord.Member):
@@ -63,8 +65,30 @@ async def calc(ctx, num1:int, op:chr, num2:int):
          ctx.send('Invalid operator. Go back to kindergarten') 
 
 
-#MUSIC
+#MUSIC MUSIC MUSIC MUSIC MUSIC MUSIC MUSIC MUSIC MUSIC MUSIC MUSIC
 
+# Suppress noise about console usage from errors
+youtube_dl.utils.bug_reports_message = lambda: ''
+
+#Format options for youtube_dl
+ytdl_format_options = {
+    'format': 'bestaudio/best',
+    'outtmpl': '%(extractor)s-%(id)s-%(title)s.%(ext)s',
+    'restrictfilenames': True,
+    'noplaylist': False,
+    'nocheckcertificate': True,
+    'ignoreerrors': False,
+    'logtostderr': False,
+    'quiet': True,
+    'no_warnings': True,
+    'default_search': 'auto',
+    'source_address': '0.0.0.0' # bind to ipv4 since ipv6 addresses cause issues sometimes
+}
+
+#ffmpeg.exe options
+ffmpeg_options = {
+    'options': '-vn'
+}
 
 
 
