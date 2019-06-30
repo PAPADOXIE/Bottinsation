@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE
 '''
 
-#Importing APIs
+#Importing APIs and Libraries
 import discord
 import youtube_dl
 import asyncio
