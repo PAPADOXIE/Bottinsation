@@ -156,8 +156,25 @@ class Music(commands.Cog):
     async def leave(self, ctx):
         await ctx.voice_client.disconnect()
 
+#Dont play when user isn't connected to voice channel
+#Stop playing when no one is connected to the voice channel
+    @play.before_invoke
+    @yt.before_invoke
+    @stream.before_invoke
+    async def ensure_voice(self, ctx):
+        if ctx.voice_client is None:
+            if ctx.author.voice:
+                await ctx.author.voice.channel.connect()
+            else:
+                await ctx.send("Dont waste my bandwidth and connect to a voice channel.")
+                raise commands.CommandError("Author not connected to a voice channel.")
+        elif ctx.voice_client.is_playing():
+            ctx.voice_client.stop()
 
 
+
+#Add music cog
+bot.add_cog(Music(bot))
 #Run bot (String is bot token)
 #Fake token here because repo is public
 bot.run('fake')
