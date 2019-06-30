@@ -47,7 +47,7 @@ async def on_ready():
 #MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC
 
 #User initiated command to send some pinoy trashtalk
-pinoyresponse = ['{0.name} is a goblok anjing', '{0.name} should go back to playing juggy like the fag dula', '{0.name} please stop blocking my camp u r like mad all over again', '{0.name} stop now or fbi will be called :rage:']
+pinoyresponse = ['{0.name} is a goblok anjing', '{0.name} should go back to playing juggy like the fag Du1a', '{0.name} please stop blocking my camp u r like mad all over again', '{0.name} stop now or fbi will be called :rage:']
 @bot.command()
 async def pinoy(ctx, member: discord.Member):
     await ctx.send(random.choice(pinoyresponse).format(member))
@@ -82,12 +82,12 @@ ytdl_format_options = {
     'restrictfilenames': True,
     'noplaylist': False,
     'nocheckcertificate': True,
-    'ignoreerrors': False,
+    'ignoreerrors': True,
     'logtostderr': False,
     'quiet': True,
     'no_warnings': True,
     'default_search': 'auto',
-    'source_address': '0.0.0.0' # bind to ipv4 since ipv6 addresses cause issues sometimes
+    'source_address': '0.0.0.0' 
 }
 
 #ffmpeg.exe options
@@ -126,13 +126,12 @@ class Music(commands.Cog):
         self.bot = bot
 
 #Make Queue
-    songs = asyncio.Queue()
-#Control Queue
-    play_next_song = asyncio.Event()
+    songs:str = []
+    songcounter:int = 0
 
 #Point to next song in queue
     def toggle_next():
-        bot.loop.call_soon_threadsafe(play_next_song.set)
+        Music.songs[Music.songcounter + 1]
 
 #Move bot to voice channel where the user who initiated command is 
     @commands.command()
@@ -141,17 +140,23 @@ class Music(commands.Cog):
             return await ctx.voice_client.move_to(channel)
 
         await channel.connect()
+        ctx.voice_client.pause()
 
 #Stream from Youtube
-    @commands.command(pass_context = True)
+    @commands.command()
     async def play(self, ctx, *, url):
 
-        async with ctx.typing():
-            player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True, after = Music.toggle_next)
-            ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
+        async with ctx.typing():              
+#Add song to queue 
+            player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True)
+            Music.songs.append(player)
 
-        await ctx.send('Now playing: {}'.format(player.title))
-
+            if ctx.voice_client.is_paused() == True:
+                ctx.voice_client.play(Music.songs[Music.songcounter], after = Music.toggle_next)               
+                await ctx.send('Now playing: {}'.format(Music.songs[Music.songcounter].title))
+            else:
+                await ctx.send('Added ({}) to the queue'.format(player.title))
+                
 #Stop playing
     @commands.command()
     async def stop(self, ctx):
@@ -160,15 +165,18 @@ class Music(commands.Cog):
 #Pause playing
     @commands.command()
     async def pause(self, ctx):
-        await ctx.voice_client.pause()
+        ctx.voice_client.pause()
+        print('Audio is paused')
 
 #Disconnect from voice channel 
     @commands.command()
     async def leave(self, ctx):
         await ctx.voice_client.disconnect()
+        print('Disconnected from voice channel')
 
 #Dont play when user isn't connected to voice channel
 #Stop playing when no one is connected to the voice channel
+    @play.before_invoke
     async def ensure_voice(self, ctx):
         if ctx.voice_client is None:
             if ctx.author.voice:
@@ -185,4 +193,4 @@ bot.add_cog(Music(bot))
 
 #Run bot (String is bot token)
 #Fake token here because repo is public
-bot.run('fake')
+bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XRjiRQ.FsWeaPQFJHO_zfLjXVMT3Xhs3Kg')
