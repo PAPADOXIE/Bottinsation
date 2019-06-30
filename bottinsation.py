@@ -147,7 +147,7 @@ class Music(commands.Cog):
     async def play(self, ctx, *, url):
 
         async with ctx.typing():
-            player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True, after = toggle_next)
+            player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True, after = Music.toggle_next)
             ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
 
         await ctx.send('Now playing: {}'.format(player.title))
@@ -185,4 +185,4 @@ bot.add_cog(Music(bot))
 
 #Run bot (String is bot token)
 #Fake token here because repo is public
-bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XRjJ8g.m4ZfgNxAHZ6knq0cjWmFfSzQblE')
+bot.run('fake')
