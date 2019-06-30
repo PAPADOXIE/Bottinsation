@@ -27,6 +27,9 @@ import discord
 #Specific Imports from discord api to enable bot commands
 from discord.ext import commands
 
+#Startup extensions
+startup_extensions = ['mp4']
+
 myself = '''I.... Am Bottinsation....
          Leader of the Discord Bots'''
 
@@ -43,11 +46,11 @@ async def on_ready():
 #User initiated command to send some pinoy trashtalk
 @bot.command()
 async def pinoy(ctx, member: discord.Member):
-    ctx.send = ('{0.name} is a goblok anjing'.format(member))
+    await ctx.send('{0.name} is a goblok anjing'.format(member))
 
 #User initiated command to do a basic arithimatic calculation
 @bot.command    
-async def calc(ctx, num1:int, num2:int, op:chr):
+async def calc(ctx, num1:int, op:chr, num2:int):
     if op == '+':
         await ctx.send(num1 + num2) 
     elif op == '-':
