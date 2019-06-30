@@ -159,8 +159,6 @@ class Music(commands.Cog):
 #Dont play when user isn't connected to voice channel
 #Stop playing when no one is connected to the voice channel
     @play.before_invoke
-    @yt.before_invoke
-    @stream.before_invoke
     async def ensure_voice(self, ctx):
         if ctx.voice_client is None:
             if ctx.author.voice:
@@ -177,4 +175,4 @@ class Music(commands.Cog):
 bot.add_cog(Music(bot))
 #Run bot (String is bot token)
 #Fake token here because repo is public
-bot.run('fake')
+bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XRiugg.ZbjFe8rsWgdkY3zNBgqSz4Mu0F4')
