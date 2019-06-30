@@ -175,4 +175,4 @@ class Music(commands.Cog):
 bot.add_cog(Music(bot))
 #Run bot (String is bot token)
 #Fake token here because repo is public
-bot.run('fake')
+bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XRjJ8g.m4ZfgNxAHZ6knq0cjWmFfSzQblE')
