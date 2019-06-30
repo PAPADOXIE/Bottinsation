@@ -37,7 +37,7 @@ myself = '''I.... Am Bottinsation....
 #Command prefix for interfacing with bot in discord 
 bot = commands.Bot(command_prefix='?', description = myself)
 
-#Bot readout / Login descriptor
+#Bot event log
 @bot.event
 async def on_ready():
     print('Logged in as')
@@ -125,6 +125,15 @@ class Music(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+#Make Queue
+    songs = asyncio.Queue()
+#Control Queue
+    play_next_song = asyncio.Event()
+
+#Point to next song in queue
+    def toggle_next():
+        bot.loop.call_soon_threadsafe(play_next_song.set)
+
 #Move bot to voice channel where the user who initiated command is 
     @commands.command()
     async def join(self, ctx, *, channel: discord.VoiceChannel):
@@ -134,10 +143,11 @@ class Music(commands.Cog):
         await channel.connect()
 
 #Stream from Youtube
-    @commands.command()
+    @commands.command(pass_context = True)
     async def play(self, ctx, *, url):
+
         async with ctx.typing():
-            player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True)
+            player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True, after = toggle_next)
             ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
 
         await ctx.send('Now playing: {}'.format(player.title))
@@ -159,7 +169,6 @@ class Music(commands.Cog):
 
 #Dont play when user isn't connected to voice channel
 #Stop playing when no one is connected to the voice channel
-    @play.before_invoke
     async def ensure_voice(self, ctx):
         if ctx.voice_client is None:
             if ctx.author.voice:
@@ -171,9 +180,9 @@ class Music(commands.Cog):
             ctx.voice_client.stop()
 
 
-
-#Add music cog
+#Adding music cog to bot
 bot.add_cog(Music(bot))
+
 #Run bot (String is bot token)
 #Fake token here because repo is public
 bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XRjJ8g.m4ZfgNxAHZ6knq0cjWmFfSzQblE')
