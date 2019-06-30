@@ -26,6 +26,7 @@ SOFTWARE
 import discord
 import youtube_dl
 import asyncio
+import random
 
 #Specific Imports from discord api to enable bot commands
 from discord.ext import commands
@@ -49,7 +50,7 @@ async def on_ready():
 pinoyresponse = ['{0.name} is a goblok anjing', '{0.name} should go back to playing juggy like the fag dula', '{0.name} please stop blocking my camp u r like mad all over again', '{0.name} stop now or fbi will be called :rage:']
 @bot.command()
 async def pinoy(ctx, member: discord.Member):
-    await ctx.send(random.choice(pinoyresponse))
+    await ctx.send(random.choice(pinoyresponse).format(member))
 
 #random trashtalk generator
 
@@ -175,4 +176,4 @@ class Music(commands.Cog):
 bot.add_cog(Music(bot))
 #Run bot (String is bot token)
 #Fake token here because repo is public
-bot.run('token')
+bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XRjJ8g.m4ZfgNxAHZ6knq0cjWmFfSzQblE')
