@@ -179,7 +179,12 @@ class Music(commands.Cog):
             ctx.voice_client.stop()
 
 self_bot = False
+
 #Images bot stuff
+@bot.command()
+async def ayaya(ctx, member: discord.Member)
+    await client.send_file('ayaya.png')
+
 
 #Add music cog
 bot.add_cog(Music(bot))
