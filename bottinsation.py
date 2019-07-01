@@ -181,6 +181,11 @@ class Music(commands.Cog):
 self_bot = False
 
 #Images bot stuff
+@bot.command()
+async def ayaya(ctx, self):
+    await bot.send(file=discord.File('ayaya.png'))
+
+
 
 #Add music cog
 bot.add_cog(Music(bot))
