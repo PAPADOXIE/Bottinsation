@@ -47,7 +47,10 @@ async def on_ready():
 #MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC
 
 #User initiated command to send some pinoy trashtalk
-pinoyresponse = ['{0.name} is a goblok anjing', '{0.name} should go back to playing juggy like the fag dula', '{0.name} please stop blocking my camp u r like mad all over again', '{0.name} stop now or fbi will be called :rage:']
+pinoyresponse = {['{0.name} is a goblok anjing', 
+                '{0.name} should go back to playing juggy like the fag dula', 
+                '{0.name} please stop blocking my camp u r like mad all over again', 
+                '{0.name} stop now or fbi will be called :rage:']}
 @bot.command()
 async def pinoy(ctx, member: discord.Member):
     await ctx.send(random.choice(pinoyresponse).format(member))
@@ -176,4 +179,4 @@ class Music(commands.Cog):
 bot.add_cog(Music(bot))
 #Run bot (String is bot token)
 #Fake token here because repo is public
-bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XRojGA.AE-qMcUYiOdTUvWdQ_xR9qigb1w')
+bot.run('false')
