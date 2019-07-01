@@ -1,7 +1,7 @@
 '''
 MIT License
 
-Copyright (c) 2019 Nofil Qasim and Faaiq Bilal uwu
+Copyright (c) 2019 Nofil Qasim and Faaiq Bilal
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -186,4 +186,4 @@ self_bot = False
 bot.add_cog(Music(bot))
 #Run bot (String is bot token)
 #Fake token here because repo is public
-bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XRo2XQ.EtksSNUlakdmFSNffYCT5mfT5tk')
+bot.run('fake')
