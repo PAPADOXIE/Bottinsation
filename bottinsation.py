@@ -13,8 +13,6 @@ furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
-Also like if you think this is a good idea you are anjing just like dula
-
 #THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,7 +57,7 @@ async def pinoy(ctx, member: discord.Member):
 
 #User initiated command to do a basic arithimatic calculation
 @bot.command    
-async def calc(ctx, num1:int, op:chr, num2:int):
+async def calculate(ctx, num1:int, op:chr, num2:int):
     if op == '+':
         await ctx.send(num1 + num2) 
     elif op == '-':
@@ -69,7 +67,7 @@ async def calc(ctx, num1:int, op:chr, num2:int):
     elif op == '/':
         await ctx.send(num1 / num2)
     else: 
-         ctx.send('Invalid operator. Go back to kindergarten') 
+         await ctx.send('Invalid operator. Go back to kindergarten') 
 
 
 #MUSIC MUSIC MUSIC MUSIC MUSIC MUSIC MUSIC MUSIC MUSIC MUSIC MUSIC
@@ -116,7 +114,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
         data = await loop.run_in_executor(None, lambda: ytdl.extract_info(url, download=not stream))
 
         if 'entries' in data:
-            # take first item from a playlist
+            # Take first item from a playlist
             data = data['entries'][0]
 
         filename = data['url'] if stream else ytdl.prepare_filename(data)
@@ -178,4 +176,4 @@ class Music(commands.Cog):
 bot.add_cog(Music(bot))
 #Run bot (String is bot token)
 #Fake token here because repo is public
-bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XRjJ8g.m4ZfgNxAHZ6knq0cjWmFfSzQblE')
+bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XRojGA.AE-qMcUYiOdTUvWdQ_xR9qigb1w')
