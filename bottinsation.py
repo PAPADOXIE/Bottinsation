@@ -13,6 +13,8 @@ furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
+Also like if you think this is a good idea you are anjing just like dula
+
 #THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -47,7 +49,7 @@ async def on_ready():
 #MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC
 
 #User initiated command to send some pinoy trashtalk
-pinoyresponse = ['{0.name} is a goblok anjing', '{0.name} should go back to playing juggy like the fag dula', '{0.name} please stop blocking my camp u r like mad all over again', '{0.name} stop now or fbi will be called :rage:']
+pinoyresponse = ['{0.name} is a goblok anjing', '{0.name} should go back to playing juggy like the fag dula', '{0.name} please stop blocking my camp u r like mad all over again', '{0.name} stop now or fbi will be called :rage:' , '{0.name} faj like zob lol']
 @bot.command()
 async def pinoy(ctx, member: discord.Member):
     await ctx.send(random.choice(pinoyresponse).format(member))
@@ -55,7 +57,7 @@ async def pinoy(ctx, member: discord.Member):
 
 #User initiated command to do a basic arithimatic calculation
 @bot.command()    
-async def calc(ctx, num1:int, op, num2:int):
+async def anjing(ctx, num1:int, op:chr, num2:int):
     if op == '+':
         await ctx.send(num1 + num2) 
     elif op == '-':
@@ -65,7 +67,7 @@ async def calc(ctx, num1:int, op, num2:int):
     elif op == '/':
         await ctx.send(num1 / num2)
     else: 
-         await ctx.send('Invalid operator. Go back to kindergarten') 
+         ctx.send('Invalid operator. Go back to kindergarten') 
 
 
 #MUSIC MUSIC MUSIC MUSIC MUSIC MUSIC MUSIC MUSIC MUSIC MUSIC MUSIC
@@ -114,7 +116,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
         data = await loop.run_in_executor(None, lambda: ytdl.extract_info(url, download=not stream))
 
         if 'entries' in data:
-            # Take first item from a playlist
+            # take first item from a playlist
             data = data['entries'][0]
 
         filename = data['url'] if stream else ytdl.prepare_filename(data)
@@ -170,10 +172,14 @@ class Music(commands.Cog):
         elif ctx.voice_client.is_playing():
             ctx.voice_client.stop()
 
+self_bot = False
+
+
+#Images bot stuff
 
 
 #Add music cog
 bot.add_cog(Music(bot))
 #Run bot (String is bot token)
 #Fake token here because repo is public
-bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XRojGA.AE-qMcUYiOdTUvWdQ_xR9qigb1w')
+bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XRjJ8g.m4ZfgNxAHZ6knq0cjWmFfSzQblE')
