@@ -52,12 +52,10 @@ pinoyresponse = ['{0.name} is a goblok anjing', '{0.name} should go back to play
 async def pinoy(ctx, member: discord.Member):
     await ctx.send(random.choice(pinoyresponse).format(member))
 
-#random trashtalk generator
-
 
 #User initiated command to do a basic arithimatic calculation
 @bot.command    
-async def calculate(ctx, num1:int, op:chr, num2:int):
+async def anjing(ctx, num1:int, op:chr, num2:int):
     if op == '+':
         await ctx.send(num1 + num2) 
     elif op == '-':
@@ -74,6 +72,8 @@ async def calculate(ctx, num1:int, op:chr, num2:int):
 
 # Suppress noise about console usage from errors
 youtube_dl.utils.bug_reports_message = lambda: ''
+
+#Nofil you are anjing bobo :) 
 
 #Format options for youtube_dl
 ytdl_format_options = {
