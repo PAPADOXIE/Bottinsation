@@ -13,6 +13,8 @@ furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
+Also like if you think this is a good idea you are anjing just like dula
+
 #THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,7 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE
 '''
 
-#Importing APIs and Libraries
+#Importing APIs
 import discord
 import youtube_dl
 import asyncio
@@ -37,7 +39,7 @@ myself = '''I.... Am Bottinsation....
 #Command prefix for interfacing with bot in discord 
 bot = commands.Bot(command_prefix='?', description = myself)
 
-#Bot event log
+#Bot readout / Login descriptor
 @bot.event
 async def on_ready():
     print('Logged in as')
@@ -47,7 +49,7 @@ async def on_ready():
 #MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC
 
 #User initiated command to send some pinoy trashtalk
-pinoyresponse = ['{0.name} is a goblok anjing', '{0.name} should go back to playing juggy like the fag Du1a', '{0.name} please stop blocking my camp u r like mad all over again', '{0.name} stop now or fbi will be called :rage:']
+pinoyresponse = ['{0.name} is a goblok anjing', '{0.name} should go back to playing juggy like the fag dula', '{0.name} please stop blocking my camp u r like mad all over again', '{0.name} stop now or fbi will be called :rage:']
 @bot.command()
 async def pinoy(ctx, member: discord.Member):
     await ctx.send(random.choice(pinoyresponse).format(member))
@@ -82,12 +84,12 @@ ytdl_format_options = {
     'restrictfilenames': True,
     'noplaylist': False,
     'nocheckcertificate': True,
-    'ignoreerrors': True,
+    'ignoreerrors': False,
     'logtostderr': False,
     'quiet': True,
     'no_warnings': True,
     'default_search': 'auto',
-    'source_address': '0.0.0.0' 
+    'source_address': '0.0.0.0' # bind to ipv4 since ipv6 addresses cause issues sometimes
 }
 
 #ffmpeg.exe options
@@ -125,14 +127,6 @@ class Music(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-#Make Queue
-    songs:str = []
-    songcounter:int = 0
-
-#Point to next song in queue
-    def toggle_next():
-        Music.songs[Music.songcounter + 1]
-
 #Move bot to voice channel where the user who initiated command is 
     @commands.command()
     async def join(self, ctx, *, channel: discord.VoiceChannel):
@@ -140,23 +134,16 @@ class Music(commands.Cog):
             return await ctx.voice_client.move_to(channel)
 
         await channel.connect()
-        ctx.voice_client.pause()
 
 #Stream from Youtube
     @commands.command()
     async def play(self, ctx, *, url):
-
-        async with ctx.typing():              
-#Add song to queue 
+        async with ctx.typing():
             player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True)
-            Music.songs.append(player)
+            ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
 
-            if ctx.voice_client.is_paused() == True:
-                ctx.voice_client.play(Music.songs[Music.songcounter], after = Music.toggle_next)               
-                await ctx.send('Now playing: {}'.format(Music.songs[Music.songcounter].title))
-            else:
-                await ctx.send('Added ({}) to the queue'.format(player.title))
-                
+        await ctx.send('Now playing: {}'.format(player.title))
+
 #Stop playing
     @commands.command()
     async def stop(self, ctx):
@@ -165,14 +152,12 @@ class Music(commands.Cog):
 #Pause playing
     @commands.command()
     async def pause(self, ctx):
-        ctx.voice_client.pause()
-        print('Audio is paused')
+        await ctx.voice_client.pause()
 
 #Disconnect from voice channel 
     @commands.command()
     async def leave(self, ctx):
         await ctx.voice_client.disconnect()
-        print('Disconnected from voice channel')
 
 #Dont play when user isn't connected to voice channel
 #Stop playing when no one is connected to the voice channel
@@ -188,9 +173,9 @@ class Music(commands.Cog):
             ctx.voice_client.stop()
 
 
-#Adding music cog to bot
-bot.add_cog(Music(bot))
 
+#Add music cog
+bot.add_cog(Music(bot))
 #Run bot (String is bot token)
 #Fake token here because repo is public
-bot.run('false')
+bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XRjJ8g.m4ZfgNxAHZ6knq0cjWmFfSzQblE')
