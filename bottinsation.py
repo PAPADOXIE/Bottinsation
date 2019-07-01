@@ -39,7 +39,7 @@ myself = '''I.... Am Bottinsation....
 #Command prefix for interfacing with bot in discord 
 bot = commands.Bot(command_prefix='?', description = myself)
 
-#Bot readout / Login descriptor
+#Bot login status
 @bot.event
 async def on_ready():
     print('Logged in as')
@@ -74,6 +74,11 @@ async def calc(ctx, num1:int, op, num2:int):
         await ctx.send(num1 / num2)
     else: 
          ctx.send('Invalid operator. Go back to kindergarten') 
+
+#User initiated command to send ayaya.png
+@bot.command()
+async def ayaya(ctx, self):
+    await bot.send(file=discord.File('ayaya.png'))
 
 
 #MUSIC MUSIC MUSIC MUSIC MUSIC MUSIC MUSIC MUSIC MUSIC MUSIC MUSIC
@@ -180,15 +185,9 @@ class Music(commands.Cog):
 
 self_bot = False
 
-#Images bot stuff
-@bot.command()
-async def ayaya(ctx, self):
-    await bot.send(file=discord.File('ayaya.png'))
-
-
 
 #Add music cog
 bot.add_cog(Music(bot))
 #Run bot (String is bot token)
 #Fake token here because repo is public
-bot.run('false')
+bot.run('fake')
