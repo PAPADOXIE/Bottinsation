@@ -173,10 +173,7 @@ class Music(commands.Cog):
             ctx.voice_client.stop()
 
 self_bot = False
-
-
 #Images bot stuff
-
 
 #Add music cog
 bot.add_cog(Music(bot))
