@@ -57,7 +57,7 @@ async def pinoy(ctx, member: discord.Member):
 
 #User initiated command to do a basic arithimatic calculation
 @bot.command    
-async def calc(ctx, num1:int, op:chr, num2:int):
+async def anjing(ctx, num1:int, op:chr, num2:int):
     if op == '+':
         await ctx.send(num1 + num2) 
     elif op == '-':
