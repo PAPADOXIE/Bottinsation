@@ -13,8 +13,6 @@ furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
-Also like if you think this is a good idea you are anjing just like dula
-
 #THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -86,8 +84,6 @@ async def ayaya(ctx, self):
 # Suppress noise about console usage from errors
 youtube_dl.utils.bug_reports_message = lambda: ''
 
-#Nofil you are anjing bobo :) 
-
 #Format options for youtube_dl
 ytdl_format_options = {
     'format': 'bestaudio/best',
@@ -100,7 +96,7 @@ ytdl_format_options = {
     'quiet': True,
     'no_warnings': True,
     'default_search': 'auto',
-    'source_address': '0.0.0.0' # bind to ipv4 since ipv6 addresses cause issues sometimes
+    'source_address': '0.0.0.0'
 }
 
 #ffmpeg.exe options
@@ -190,4 +186,4 @@ self_bot = False
 bot.add_cog(Music(bot))
 #Run bot (String is bot token)
 #Fake token here because repo is public
-bot.run('fake')
+bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XRo2XQ.EtksSNUlakdmFSNffYCT5mfT5tk')
