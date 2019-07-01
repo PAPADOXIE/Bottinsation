@@ -63,7 +63,7 @@ async def pinoy(ctx, member: discord.Member):
 
 #User initiated command to do a basic arithimatic calculation
 @bot.command()    
-async def anjing(ctx, num1:int, op:chr, num2:int):
+async def calc(ctx, num1:int, op, num2:int):
     if op == '+':
         await ctx.send(num1 + num2) 
     elif op == '-':
@@ -182,8 +182,9 @@ self_bot = False
 
 #Images bot stuff
 @bot.command()
-async def ayaya(ctx, member: discord.Member)
-    await client.send_file('ayaya.png')
+async def ayaya(ctx, self):
+    await bot.send(file=discord.File('ayaya.png'))
+
 
 
 #Add music cog
