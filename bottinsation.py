@@ -31,6 +31,9 @@ import random
 #Specific Imports from discord api to enable bot commands
 from discord.ext import commands
 
+#BOT STARTUP BOT STARTUP BOT STARTUP BOT STARTUP BOT STARTUP BOT STARTUP BOT STARTUP 
+
+#Bot description
 myself = '''I.... Am Bottinsation....
          Leader of the Discord Bots'''
 
@@ -43,6 +46,10 @@ async def on_ready():
     print('Logged in as')
     print(bot.user.name)
     print(bot.user.id)
+#Update bot activity status
+    activity = discord.Activity(name='over Kingar Nugar', type=discord.ActivityType.watching)
+    bot.change_presence(activity=activity)
+
 
 #MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC
 
