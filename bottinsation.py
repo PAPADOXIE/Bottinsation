@@ -59,7 +59,7 @@ pinoyresponse = [
                     '{0.name} should go back to playing juggy like the fag dula', 
                     '{0.name} please stop blocking my camp u r like mad all over again', 
                     '{0.name} stop now or fbi will be called :rage:',
-                    '{0.name} fag like zob :thinking:'                  
+                    '{0.name} is fag like zob :thinking:'                  
                 ]   
 @bot.command()
 async def pinoy(ctx, member: discord.Member):
