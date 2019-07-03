@@ -48,7 +48,7 @@ async def on_ready():
     print(bot.user.id)
 #Update bot activity status
     activity = discord.Activity(name='over Kingar Nugar', type=discord.ActivityType.watching)
-    bot.change_presence(activity=activity)
+    await bot.change_presence(activity=activity)
 
 
 #MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC
@@ -193,4 +193,4 @@ self_bot = False
 bot.add_cog(Music(bot))
 #Run bot (String is bot token)
 #Fake token here because repo is public
-bot.run('fake')
+bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XRzIwQ.tU5PmdyvA9ciH9GHinblIK69SQM')
