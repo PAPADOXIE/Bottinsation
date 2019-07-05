@@ -143,25 +143,28 @@ class Music(commands.Cog):
 
 #Creating song queue
     songs = asyncio.Queue()
-#Creating event to switch songs
+#Creating event to switch to next song
     play_next_song = asyncio.Event()
+
 #Creating a task to play the music
-    async def audio_player_task():
+    async def start(self, ctx):
         while True:
             Music.play_next_song.clear()
             current = await Music.songs.get()
-            current.start()
+            ctx.voice_client.play(current, after=Music.toggle_next)
+            await ctx.send('Now playing: {}'.format(current.title))
             await Music.play_next_song.wait()
 
+ #Point to next song   
+    def toggle_next():
+        bot.loop.call_soon_threadsafe(play_next_song.set)
 
 #Move bot to voice channel where the user who initiated command is 
     @commands.command()
     async def join(self, ctx, *, channel: discord.VoiceChannel):
         if ctx.voice_client is not None:
             return await ctx.voice_client.move_to(channel)
-            voice = await bot.join_voice_channel(ctx.message.author.voice_channel)
-        else:
-            voice = bot.voice_client_in(ctx.message.server)
+
         await channel.connect()
 
 #Play/Add user requested song to queue
@@ -169,10 +172,11 @@ class Music(commands.Cog):
     async def play(self, ctx, *, url):
 
         async with ctx.typing():
-            player = await join.voice.create_ytdl_player(url, after = Music.toggle_next)
-            await songs.put(player)
-
-        await ctx.send('Now playing: {}'.format(player.title))
+            player = await YTDLSource.from_url(url, loop=self.bot.loop)
+            await Music.songs.put(player)
+            
+        await ctx.send('Added : {} to the queue'.format(player.title))
+        print('Added : {} to the queue'.format(player.title))
 
 #Stop playing
     @commands.command()
@@ -183,6 +187,18 @@ class Music(commands.Cog):
     @commands.command()
     async def pause(self, ctx):
         await ctx.voice_client.pause()
+
+#Show queue
+    @commands.command()
+    async def queue(self,ctx):
+        async with ctx.typing():
+            for i in range (0, Music.songs.qsize()+1):
+                if i != 0 and Music.songs.qsize() == i:
+                    break
+                else:    
+                    q = await Music.songs.get()
+                    await ctx.send('{} : {}'.format(i+1, q.title))
+                    await Music.songs.put(q)
 
 #Disconnect from voice channel 
     @commands.command()
@@ -200,16 +216,17 @@ class Music(commands.Cog):
                 await ctx.send("Dont waste my bandwidth and connect to a voice channel.")
                 raise commands.CommandError("Author not connected to a voice channel.")
         elif ctx.voice_client.is_playing():
-            ctx.voice_client.stop()
+            # ctx.voice_client.stop()
+            print('')
 
-    #Create loop for playing music
-    bot.loop.create_task(audio_player_task())
 
 self_bot = False
 
 
 #Add music cog
 bot.add_cog(Music(bot))
+bot.loop.create_task(Music.start(bot, pass_context = True))
+
 #Run bot (String is bot token)
 #Fake token here because repo is public
 bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XR8g9w.K7hEIekctWWH0i2qmBDcKOudKYI')
