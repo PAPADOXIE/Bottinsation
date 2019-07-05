@@ -141,6 +141,19 @@ class Music(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+#Creating song queue
+    songs = asyncio.Queue()
+#Creating event to switch songs
+    play_next_song = asyncio.Event()
+#Creating a task to play the music
+    async def audio_player_task():
+        while True:
+            Music.play_next_song.clear()
+            current = await Music.songs.get()
+            current.start()
+            await Music.play_next_song.wait()
+
+
 #Move bot to voice channel where the user who initiated command is 
     @commands.command()
     async def join(self, ctx, *, channel: discord.VoiceChannel):
@@ -149,12 +162,16 @@ class Music(commands.Cog):
 
         await channel.connect()
 
-#Stream from Youtube
+#Play/Add user requested song to queue
     @commands.command()
-    async def play(self, ctx, *, url):
-        async with ctx.typing():
-            player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True)
-            ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
+    async def play(ctx, url):
+        if ctx.voice_client is not None:
+            voice = await bot.join_voice_channel(ctx.message.author.voice_channel)
+        else:
+            voice = bot.voice_client_in(ctx.message.server)
+
+        player = await voice.create_ytdl_player(url, after = Music.toggle_next)
+        await songs.put(player)
 
         await ctx.send('Now playing: {}'.format(player.title))
 
@@ -191,6 +208,7 @@ self_bot = False
 
 #Add music cog
 bot.add_cog(Music(bot))
+bot.loop.create_task(Music.audio_player_task())
 #Run bot (String is bot token)
 #Fake token here because repo is public
-bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XRzIwQ.tU5PmdyvA9ciH9GHinblIK69SQM')
+bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XR8g9w.K7hEIekctWWH0i2qmBDcKOudKYI')
