@@ -159,19 +159,18 @@ class Music(commands.Cog):
     async def join(self, ctx, *, channel: discord.VoiceChannel):
         if ctx.voice_client is not None:
             return await ctx.voice_client.move_to(channel)
-
+            voice = await bot.join_voice_channel(ctx.message.author.voice_channel)
+        else:
+            voice = bot.voice_client_in(ctx.message.server)
         await channel.connect()
 
 #Play/Add user requested song to queue
     @commands.command()
-    async def play(ctx, url):
-        if ctx.voice_client is not None:
-            voice = await bot.join_voice_channel(ctx.message.author.voice_channel)
-        else:
-            voice = bot.voice_client_in(ctx.message.server)
+    async def play(self, ctx, *, url):
 
-        player = await voice.create_ytdl_player(url, after = Music.toggle_next)
-        await songs.put(player)
+        async with ctx.typing():
+            player = await join.voice.create_ytdl_player(url, after = Music.toggle_next)
+            await songs.put(player)
 
         await ctx.send('Now playing: {}'.format(player.title))
 
@@ -203,12 +202,14 @@ class Music(commands.Cog):
         elif ctx.voice_client.is_playing():
             ctx.voice_client.stop()
 
+    #Create loop for playing music
+    bot.loop.create_task(audio_player_task())
+
 self_bot = False
 
 
 #Add music cog
 bot.add_cog(Music(bot))
-bot.loop.create_task(Music.audio_player_task())
 #Run bot (String is bot token)
 #Fake token here because repo is public
 bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XR8g9w.K7hEIekctWWH0i2qmBDcKOudKYI')
