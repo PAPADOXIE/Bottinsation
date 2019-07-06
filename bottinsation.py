@@ -188,12 +188,17 @@ class Music(commands.Cog):
     async def pause(self, ctx):
         await ctx.voice_client.pause()
 
+#Resume playing 
+    @commands.command()
+    async def resume(self,ctx):
+        await ctx.voice_client.resume()
+
 #Show queue
     @commands.command()
     async def queue(self,ctx):
         async with ctx.typing():
             for i in range (0, Music.songs.qsize()+1):
-                if i != 0 and Music.songs.qsize() == i:
+                if i != 1 and Music.songs.qsize() == i:
                     break
                 else:    
                     q = await Music.songs.get()
@@ -211,13 +216,16 @@ class Music(commands.Cog):
     async def ensure_voice(self, ctx):
         if ctx.voice_client is None:
             if ctx.author.voice:
+#Creating music task
+                bot.loop.create_task(Music.start(self, ctx))
                 await ctx.author.voice.channel.connect()
             else:
                 await ctx.send("Dont waste my bandwidth and connect to a voice channel.")
                 raise commands.CommandError("Author not connected to a voice channel.")
         elif ctx.voice_client.is_playing():
             # ctx.voice_client.stop()
-            print('')
+            print('Still Playing')
+
 
 
 self_bot = False
@@ -225,8 +233,7 @@ self_bot = False
 
 #Add music cog
 bot.add_cog(Music(bot))
-bot.loop.create_task(Music.start(bot, pass_context = True))
 
 #Run bot (String is bot token)
 #Fake token here because repo is public
-bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XR8g9w.K7hEIekctWWH0i2qmBDcKOudKYI')
+bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XSDxmg.53ZBRCSVcUehKXtFpxvgQHqXCAI')
