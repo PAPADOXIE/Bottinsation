@@ -224,7 +224,7 @@ class MusicClient(discord.Client):
 
     async def on_ready(self):
         print('Music is ready')
-    
+
     async def music_background_task(self):
         await self.wait_until_ready()
         counter = 0
@@ -232,7 +232,7 @@ class MusicClient(discord.Client):
         while not self.is_closed():
             counter += 1
             await channel.send(counter)
-            # await asyncio.sleep(60)
+            await asyncio.sleep(60)
 
 self_bot = False
 
