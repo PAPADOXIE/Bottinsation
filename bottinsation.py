@@ -40,16 +40,6 @@ myself = '''I.... Am Bottinsation....
 #Command prefix for interfacing with bot in discord 
 bot = commands.Bot(command_prefix='?', description = myself)
 
-#Bot login status
-@bot.event
-async def on_ready():
-    print('Logged in as')
-    print(bot.user.name)
-    print(bot.user.id)
-#Update bot activity status
-    activity = discord.Activity(name='over Kingar Nugar', type=discord.ActivityType.watching)
-    await bot.change_presence(activity=activity)
-
 
 #MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC
 
@@ -147,19 +137,19 @@ class Music(commands.Cog):
     play_next_song = asyncio.Event()
 
 #Creating a task to play the music
-    async def start(self, ctx):
+    async def start(self, ctx, *, channel: discord.VoiceChannel):
         while True:
             Music.play_next_song.clear()
             current = await Music.songs.get()
-            ctx.voice_client.play(current, after=Music.toggle_next)
-            await ctx.send('Now playing: {}'.format(current.title))
+            channel.voice_client.play(current, after=Music.toggle_next)
+            await channel.send('Now playing: {}'.format(current.title))
             await Music.play_next_song.wait()
 
  #Point to next song   
     def toggle_next():
         bot.loop.call_soon_threadsafe(play_next_song.set)
 
-#Move bot to voice channel where the user who initiated command is 
+#Move bot to voice channel where the user who initiated command is
     @commands.command()
     async def join(self, ctx, *, channel: discord.VoiceChannel):
         if ctx.voice_client is not None:
@@ -216,8 +206,6 @@ class Music(commands.Cog):
     async def ensure_voice(self, ctx):
         if ctx.voice_client is None:
             if ctx.author.voice:
-#Creating music task
-                bot.loop.create_task(Music.start(self, ctx))
                 await ctx.author.voice.channel.connect()
             else:
                 await ctx.send("Dont waste my bandwidth and connect to a voice channel.")
@@ -227,12 +215,43 @@ class Music(commands.Cog):
             print('Still Playing')
 
 
+class MusicClient(discord.Client):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)   
+
+#Creating music background task
+        self.music_task = bot.loop.create_task(Music.start())
+
+    async def on_ready(self):
+        print('Music is ready')
+    
+    async def music_background_task(self):
+        await self.wait_until_ready()
+        counter = 0
+        channel = self.get_channel(discord.VoiceChannel)
+        while not self.is_closed():
+            counter += 1
+            await channel.send(counter)
+            # await asyncio.sleep(60)
 
 self_bot = False
 
 
 #Add music cog
+music_client = MusicClient()
 bot.add_cog(Music(bot))
+
+#Bot login status
+@bot.event
+async def on_ready():
+    print('Logged in as')
+    print(bot.user.name)
+    print(bot.user.id)
+#Update bot activity status
+    activity = discord.Activity(name='over Kingar Nugar', type=discord.ActivityType.watching)
+    await bot.change_presence(activity=activity)
+#Run music client
+    await music_client.start('NTk0NTQ3MDI5ODE3MDMyNzI1.XSDxmg.53ZBRCSVcUehKXtFpxvgQHqXCAI')
 
 #Run bot (String is bot token)
 #Fake token here because repo is public
