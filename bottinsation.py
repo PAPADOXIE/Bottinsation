@@ -137,12 +137,13 @@ class Music(commands.Cog):
     play_next_song = asyncio.Event()
 
 #Creating a task to play the music
-    async def start(self, ctx, *, channel: discord.VoiceChannel):
+    async def start(self):
+        ctx = bot.get_context()
         while True:
             Music.play_next_song.clear()
             current = await Music.songs.get()
-            channel.voice_client.play(current, after=Music.toggle_next)
-            await channel.send('Now playing: {}'.format(current.title))
+            ctx.voice_client.play(current, after=Music.toggle_next)
+            await ctx.send('Now playing: {}'.format(current.title))
             await Music.play_next_song.wait()
 
  #Point to next song   
@@ -220,7 +221,7 @@ class MusicClient(discord.Client):
         super().__init__(*args, **kwargs)   
 
 #Creating music background task
-        self.music_task = bot.loop.create_task(Music.start())
+        self.music_task = bot.loop.create_task(Music.start(self))
 
     async def on_ready(self):
         print('Music is ready')
@@ -240,6 +241,7 @@ self_bot = False
 #Add music cog
 music_client = MusicClient()
 bot.add_cog(Music(bot))
+bot.loop.create_task(Music.start(Music))
 
 #Bot login status
 @bot.event
@@ -251,8 +253,8 @@ async def on_ready():
     activity = discord.Activity(name='over Kingar Nugar', type=discord.ActivityType.watching)
     await bot.change_presence(activity=activity)
 #Run music client
-    await music_client.start('NTk0NTQ3MDI5ODE3MDMyNzI1.XSDxmg.53ZBRCSVcUehKXtFpxvgQHqXCAI')
+    # await music_client.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XSM18w.BoXxVJ46dkJZe96zNF2jjKpW3ic')
 
 #Run bot (String is bot token)
 #Fake token here because repo is public
-bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XSDxmg.53ZBRCSVcUehKXtFpxvgQHqXCAI')
+bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XSM18w.BoXxVJ46dkJZe96zNF2jjKpW3ic')
