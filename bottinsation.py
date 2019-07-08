@@ -127,7 +127,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
         return cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)
 
 #Class for accepting music commands and initializing bot for music 
-class Music(commands.Cog):
+class Music(commands.Cog, discord.Client):
     def __init__(self, bot):
         self.bot = bot
 
@@ -138,12 +138,11 @@ class Music(commands.Cog):
 
 #Creating a task to play the music
     async def start(self):
-        ctx = bot.get_context()
         while True:
             Music.play_next_song.clear()
             current = await Music.songs.get()
-            ctx.voice_client.play(current, after=Music.toggle_next)
-            await ctx.send('Now playing: {}'.format(current.title))
+            Music.play.ctx.voice_client.play(current, after=Music.toggle_next)
+            await Music.play.ctx.send('Now playing: {}'.format(current.title))
             await Music.play_next_song.wait()
 
  #Point to next song   
@@ -161,7 +160,7 @@ class Music(commands.Cog):
 #Play/Add user requested song to queue
     @commands.command()
     async def play(self, ctx, *, url):
-
+        ctx = ctx
         async with ctx.typing():
             player = await YTDLSource.from_url(url, loop=self.bot.loop)
             await Music.songs.put(player)
@@ -209,31 +208,34 @@ class Music(commands.Cog):
             if ctx.author.voice:
                 await ctx.author.voice.channel.connect()
             else:
-                await ctx.send("Dont waste my bandwidth and connect to a voice channel.")
+                await ctx.send("Dont try to waste my bandwidth and connect to a voice channel.")
                 raise commands.CommandError("Author not connected to a voice channel.")
         elif ctx.voice_client.is_playing():
-            # ctx.voice_client.stop()
             print('Still Playing')
 
 
 class MusicClient(discord.Client):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)   
-
 #Creating music background task
-        self.music_task = bot.loop.create_task(Music.start(self))
-
-    async def on_ready(self):
-        print('Music is ready')
+        self.bg_task = self.loop.create_task(self.music_background_task())
 
     async def music_background_task(self):
         await self.wait_until_ready()
+        print('Music is Ready')
         counter = 0
-        channel = self.get_channel(discord.VoiceChannel)
         while not self.is_closed():
             counter += 1
-            await channel.send(counter)
-            await asyncio.sleep(60)
+            print('Counting {}'.format(counter))
+
+            # while True:
+                # Music.play_next_song.clear()
+                # current = await Music.songs.get()
+                # Music.play.ctx.voice_client.play(current, after=Music.toggle_next)
+                # await Music.play.ctx.send('Now playing: {}'.format(current.title))
+                # await Music.play_next_song.wait()
+
+            await asyncio.sleep(1)
 
 self_bot = False
 
@@ -241,7 +243,6 @@ self_bot = False
 #Add music cog
 music_client = MusicClient()
 bot.add_cog(Music(bot))
-bot.loop.create_task(Music.start(Music))
 
 #Bot login status
 @bot.event
@@ -249,11 +250,13 @@ async def on_ready():
     print('Logged in as')
     print(bot.user.name)
     print(bot.user.id)
+    print('------')
 #Update bot activity status
     activity = discord.Activity(name='over Kingar Nugar', type=discord.ActivityType.watching)
     await bot.change_presence(activity=activity)
 #Run music client
-    # await music_client.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XSM18w.BoXxVJ46dkJZe96zNF2jjKpW3ic')
+    await music_client.start('NTk0NTQ3MDI5ODE3MDMyNzI1.XSM18w.BoXxVJ46dkJZe96zNF2jjKpW3ic')
+    
 
 #Run bot (String is bot token)
 #Fake token here because repo is public
