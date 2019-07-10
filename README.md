@@ -1,7 +1,18 @@
 # Bottinsation
 A discord bot for personal use.
 
-Coded to expand my knowledge of api usage and handling integrations.
-Also helped me learn a bit more about github and source control and the terminal application of git.
+Things that I learned while coding this:
+
+Automation of tasks using a bot
+
+API Usage
+
+Source Control
+
+GitHub as a desktop application and as a command line application
+
+Asynchronous programming in Python
+
+Multithreaded programming in Python
 
 Libraries Used = discord.py by Rapptz (https://github.com/Rapptz/discord.py), asyncIO, random, youtube_dl.
