@@ -137,7 +137,7 @@ class Music(commands.Cog, discord.Client):
     play_next_song = asyncio.Event()
 
 #Creating a task to play the music
-    async def start(self):
+    async def go(self):
         while True:
             Music.play_next_song.clear()
             current = await Music.songs.get()
@@ -187,10 +187,10 @@ class Music(commands.Cog, discord.Client):
     @commands.command()
     async def queue(self,ctx):
         async with ctx.typing():
-            for i in range (0, Music.songs.qsize()+1):
-                if i != 1 and Music.songs.qsize() == i:
-                    break
-                else:    
+            if Music.songs.qsize() == 0:
+                await ctx.send('No songs in queue')
+            else:
+                for i in range (0, Music.songs.qsize()):   
                     q = await Music.songs.get()
                     await ctx.send('{} : {}'.format(i+1, q.title))
                     await Music.songs.put(q)
@@ -223,18 +223,11 @@ class MusicClient(discord.Client):
     async def music_background_task(self):
         await self.wait_until_ready()
         print('Music is Ready')
-        counter = 0
+        counter = 0       
         while not self.is_closed():
             counter += 1
             print('Counting {}'.format(counter))
-
-            # while True:
-                # Music.play_next_song.clear()
-                # current = await Music.songs.get()
-                # Music.play.ctx.voice_client.play(current, after=Music.toggle_next)
-                # await Music.play.ctx.send('Now playing: {}'.format(current.title))
-                # await Music.play_next_song.wait()
-
+            await Music.go(Music)
             await asyncio.sleep(1)
 
 self_bot = False
@@ -255,9 +248,9 @@ async def on_ready():
     activity = discord.Activity(name='over Kingar Nugar', type=discord.ActivityType.watching)
     await bot.change_presence(activity=activity)
 #Run music client
-    await music_client.start('NTk0NTQ3MDI5ODE3MDMyNzI1.XSM18w.BoXxVJ46dkJZe96zNF2jjKpW3ic')
+    await music_client.start('NTk0NTQ3MDI5ODE3MDMyNzI1.XSR8yA.aRo6L6ACHOBvW6l_Y2fX4ETLyQ4')
     
 
 #Run bot (String is bot token)
 #Fake token here because repo is public
-bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XSM18w.BoXxVJ46dkJZe96zNF2jjKpW3ic')
+bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XSR8yA.aRo6L6ACHOBvW6l_Y2fX4ETLyQ4')
