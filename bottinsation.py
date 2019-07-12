@@ -117,7 +117,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
     @classmethod
     async def from_url(cls, url, *, loop=None, stream=False):
         loop = loop or asyncio.get_event_loop()
-        data = await loop.run_in_executor(None, lambda: ytdl.extract_info(url, download=not stream))
+        data = await loop.run_in_executor(None, lambda: ytdl.extract_info(url, download = not stream))
 
         if 'entries' in data:
             # take first item from a playlist
@@ -126,7 +126,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
         filename = data['url'] if stream else ytdl.prepare_filename(data)
         return cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)
 
-#Class for accepting music commands and initializing bot for music 
+#Class for accepting music c ommands and initializing bot for music 
 class Music(commands.Cog, discord.Client):
     def __init__(self, bot):
         self.bot = bot
@@ -138,21 +138,23 @@ class Music(commands.Cog, discord.Client):
 
 #Creating a task to play the music
     async def go(self):
-        x = True
-        while x == True:
-            if loop.repeat == True:
-                Music.play_next_song.clear()
-                current = await Music.songs.get()
-                Music.play.ctx.voice_client.play(current, after=Music.toggle_next)
-                await Music.play.ctx.send('Now playing: {}'.format(current.title))
-                Music.songs.put(current)
-                await Music.play_next_song.wait()
-            else:
-                Music.play_next_song.clear()
-                current = await Music.songs.get()
-                Music.play.ctx.voice_client.play(current, after=Music.toggle_next)
-                await Music.play.ctx.send('Now playing: {}'.format(current.title))
-                await Music.play_next_song.wait()
+        print('Music is Ready')
+        x = 0
+        print('Music is Ready')
+        # if loop.repeat == 'on':              
+        #     Music.play_next_song.clear()
+        #     current = await Music.songs.get_nowait()
+        #     self.play(current, after = Music.toggle_next)
+        #     await self.send('Now playing: {}'.format(current.title))
+        #     Music.songs.put(current)
+        #     await Music.play_next_song.wait()
+        # else:
+        print('Music is Ready')
+        Music.play_next_song.clear()
+        current = await Music.songs.get_nowait()
+        self.play(current, after = Music.toggle_next)
+        await self.send('Now playing: {}'.format(current.title))
+        await Music.play_next_song.wait()
 
  #Point to next song   
     def toggle_next():
@@ -171,7 +173,7 @@ class Music(commands.Cog, discord.Client):
     async def play(self, ctx, *, url):
         ctx = ctx
         async with ctx.typing():
-            player = await YTDLSource.from_url(url, loop=self.bot.loop)
+            player = await YTDLSource.from_url(url, loop = self.bot.loop)
             await Music.songs.put(player)
             
         await ctx.send('Added : {} to the queue'.format(player.title))
@@ -208,10 +210,10 @@ class Music(commands.Cog, discord.Client):
     @commands.command()
     async def loop(self, ctx, repeat):
         if repeat == 'on':
-            repeat = True 
+            repeat = 'on' 
             await ctx.send('Queue will now repeat')
         elif repeat == 'off':
-            repeat == False
+            repeat == 'off'
             await ctx.send('Queue will not repeat now')
 
 #Disconnect from voice channel 
@@ -230,7 +232,7 @@ class Music(commands.Cog, discord.Client):
                 await ctx.send("Dont try to waste my bandwidth and connect to a voice channel.")
                 raise commands.CommandError("Author not connected to a voice channel.")
         elif ctx.voice_client.is_playing():
-            print('Still Playing')
+            print('Still Connected')
 
 
 class MusicClient(discord.Client):
@@ -267,9 +269,9 @@ async def on_ready():
     activity = discord.Activity(name='over Kingar Nugar', type=discord.ActivityType.watching)
     await bot.change_presence(activity=activity)
 #Run music client
-    await music_client.start('fake')
+    await music_client.start('NTk0NTQ3MDI5ODE3MDMyNzI1.XSh_7Q.O3JZ7T9VGKHnwE2SQmJcIcFZ5E0')
     
 
 #Run bot (String is bot token)
 #Fake token here because repo is public
-bot.run('fake')
+bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XSh_7Q.O3JZ7T9VGKHnwE2SQmJcIcFZ5E0')
