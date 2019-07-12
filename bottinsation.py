@@ -230,7 +230,7 @@ class Music(commands.Cog, discord.Client):
                 await ctx.send("Dont try to waste my bandwidth and connect to a voice channel.")
                 raise commands.CommandError("Author not connected to a voice channel.")
         elif ctx.voice_client.is_playing():
-            print('Still Playing')
+            print('Still Connected')
 
 
 class MusicClient(discord.Client):
