@@ -138,12 +138,21 @@ class Music(commands.Cog, discord.Client):
 
 #Creating a task to play the music
     async def go(self):
-        while True:
-            Music.play_next_song.clear()
-            current = await Music.songs.get()
-            Music.play.ctx.voice_client.play(current, after=Music.toggle_next)
-            await Music.play.ctx.send('Now playing: {}'.format(current.title))
-            await Music.play_next_song.wait()
+        x = True
+        while x == True:
+            if loop.repeat == True:
+                Music.play_next_song.clear()
+                current = await Music.songs.get()
+                Music.play.ctx.voice_client.play(current, after=Music.toggle_next)
+                await Music.play.ctx.send('Now playing: {}'.format(current.title))
+                Music.songs.put(current)
+                await Music.play_next_song.wait()
+            else:
+                Music.play_next_song.clear()
+                current = await Music.songs.get()
+                Music.play.ctx.voice_client.play(current, after=Music.toggle_next)
+                await Music.play.ctx.send('Now playing: {}'.format(current.title))
+                await Music.play_next_song.wait()
 
  #Point to next song   
     def toggle_next():
@@ -194,6 +203,16 @@ class Music(commands.Cog, discord.Client):
                     q = await Music.songs.get()
                     await ctx.send('{} : {}'.format(i+1, q.title))
                     await Music.songs.put(q)
+
+#Repeat the queue
+    @commands.command()
+    async def loop(self, ctx, repeat):
+        if repeat == 'on':
+            repeat = True 
+            await ctx.send('Queue will now repeat')
+        elif repeat == 'off':
+            repeat == False
+            await ctx.send('Queue will not repeat now')
 
 #Disconnect from voice channel 
     @commands.command()
@@ -248,9 +267,9 @@ async def on_ready():
     activity = discord.Activity(name='over Kingar Nugar', type=discord.ActivityType.watching)
     await bot.change_presence(activity=activity)
 #Run music client
-    await music_client.start('NTk0NTQ3MDI5ODE3MDMyNzI1.XSR8yA.aRo6L6ACHOBvW6l_Y2fX4ETLyQ4')
+    await music_client.start('fake')
     
 
 #Run bot (String is bot token)
 #Fake token here because repo is public
-bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XSR8yA.aRo6L6ACHOBvW6l_Y2fX4ETLyQ4')
+bot.run('fake')
