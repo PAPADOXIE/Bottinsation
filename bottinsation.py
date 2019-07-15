@@ -149,7 +149,9 @@ class Music(commands.Cog, discord.Client):
 #Creating event to switch to next song
     play_next_song = asyncio.Event()
 #Tag for looping queue
-    repeat = 'off'
+    repeat = False
+#Tag for skipping a song
+    skip = False
 #Currently playing song
     current = ''
 
@@ -179,18 +181,24 @@ class Music(commands.Cog, discord.Client):
 #Loop which checks for a song to play and plays if there is one
         while Music.songs.qsize() != 0:
 
+#Check whether to skip current song or not
+            if Music.skip == True:
+                ctx.voice_client.stop()
+                Music.skip == False
+
 #Check whether anything is playing or not
             if not ctx.voice_client.is_playing():
+
 #Checks whether to loop the queue or not
 #If queue should be looped then
-                if Music.repeat == 'on':
+                if Music.repeat == True:
                     Music.current = await Music.songs.get()
                     ctx.voice_client.play(Music.current, after = Music.toggle_next)
                     await ctx.send('Now playing: {}'.format(Music.current.title))
                     Music.songs.put(Music.current)
 
 #If queue shouldnt be looped or no arguments then
-                elif Music.repeat == 'off':
+                elif Music.repeat == False:
                     Music.current = await Music.songs.get()
                     ctx.voice_client.play(Music.current, after = Music.toggle_next)
                     await ctx.send('Now playing: {}'.format(Music.current.title))
@@ -228,13 +236,25 @@ class Music(commands.Cog, discord.Client):
 #Repeat the queue
     @commands.command()
     async def loop(self, ctx):
-        if Music.repeat == 'off':
-            Music.repeat = 'on' 
+        if Music.repeat == False:
+            Music.repeat = True 
             await Music.songs.put(Music.current)
             await ctx.send('Queue will now repeat')
-        elif Music.repeat == 'on':
-            Music.repeat == 'off'
+        elif Music.repeat == True:
+            Music.repeat == False
             await ctx.send('Queue will not repeat now')
+
+#Clear the queue
+    @commands.command()
+    async def clear(self, ctx):
+        while Music.songs.qsize() != 0:
+            await Music.songs.get()
+        await ctx.send('Queue has been cleared') 
+
+#Skip a song
+    @commands.command()
+    async def skip(self, ctx):
+        Music.skip = True
 
 #Disconnect from voice channel 
     @commands.command()
@@ -262,4 +282,4 @@ bot.add_cog(Music(bot))
 
 #Run bot (String is bot token)
 #Fake token here because repo is public
-bot.run('fake')
+bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XSvIOw.h18AKvYGxmiebLMdfYUlBOR4ySo')
