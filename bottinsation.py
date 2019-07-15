@@ -27,6 +27,7 @@ import discord
 import youtube_dl
 import asyncio
 import random
+import os
 
 #Specific Imports from discord api to enable bot commands
 from discord.ext import commands
@@ -40,23 +41,35 @@ myself = '''I.... Am Bottinsation....
 #Command prefix for interfacing with bot in discord 
 bot = commands.Bot(command_prefix='?', description = myself)
 
+#Bot login status
+@bot.event
+async def on_ready():
+    print('Logged in as')
+    print(bot.user.name)
+    print(bot.user.id)
+    print('------')
+#Update bot activity status
+    activity = discord.Activity(name='over Kingar Nugar', type=discord.ActivityType.watching)
+    await bot.change_presence(activity=activity)
 
 #MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC
 
-#User initiated command to send some pinoy trashtalk
+#List of responses for method pinoy
 pinoyresponse = [                    
                     '{0.name} is a goblok anjing', 
                     '{0.name} should go back to playing juggy like the fag dula', 
                     '{0.name} please stop blocking my camp u r like mad all over again', 
                     '{0.name} stop now or fbi will be called :rage:',
                     '{0.name} is fag like zob :thinking:'                  
-                ]   
+                ]  
+
+#Send some pinoy trashtalk
 @bot.command()
 async def pinoy(ctx, member: discord.Member):
     await ctx.send(random.choice(pinoyresponse).format(member))
 
 
-#User initiated command to do a basic arithimatic calculation
+#Do a calculation on user input data and return answer
 @bot.command()    
 async def calc(ctx, num1:int, op, num2:int):
     if op == '+':
@@ -70,7 +83,7 @@ async def calc(ctx, num1:int, op, num2:int):
     else: 
          ctx.send('Invalid operator. Go back to kindergarten') 
 
-#User initiated command to send ayaya.png
+#Send ayaya.png
 @bot.command()
 async def ayaya(ctx, self):
     await bot.send(file=discord.File('ayaya.png'))
@@ -135,26 +148,10 @@ class Music(commands.Cog, discord.Client):
     songs = asyncio.Queue()
 #Creating event to switch to next song
     play_next_song = asyncio.Event()
-
-#Creating a task to play the music
-    async def go(self):
-        print('Music is Ready')
-        x = 0
-        print('Music is Ready')
-        # if loop.repeat == 'on':              
-        #     Music.play_next_song.clear()
-        #     current = await Music.songs.get_nowait()
-        #     self.play(current, after = Music.toggle_next)
-        #     await self.send('Now playing: {}'.format(current.title))
-        #     Music.songs.put(current)
-        #     await Music.play_next_song.wait()
-        # else:
-        print('Music is Ready')
-        Music.play_next_song.clear()
-        current = await Music.songs.get_nowait()
-        self.play(current, after = Music.toggle_next)
-        await self.send('Now playing: {}'.format(current.title))
-        await Music.play_next_song.wait()
+#Tag for looping queue
+    repeat = 'off'
+#Currently playing song
+    current = ''
 
  #Point to next song   
     def toggle_next():
@@ -171,13 +168,35 @@ class Music(commands.Cog, discord.Client):
 #Play/Add user requested song to queue
     @commands.command()
     async def play(self, ctx, *, url):
-        ctx = ctx
+
         async with ctx.typing():
             player = await YTDLSource.from_url(url, loop = self.bot.loop)
             await Music.songs.put(player)
             
         await ctx.send('Added : {} to the queue'.format(player.title))
         print('Added : {} to the queue'.format(player.title))
+
+#Loop which checks for a song to play and plays if there is one
+        while Music.songs.qsize() != 0:
+
+#Check whether anything is playing or not
+            if not ctx.voice_client.is_playing():
+#Checks whether to loop the queue or not
+#If queue should be looped then
+                if Music.repeat == 'on':
+                    Music.current = await Music.songs.get()
+                    ctx.voice_client.play(Music.current, after = Music.toggle_next)
+                    await ctx.send('Now playing: {}'.format(Music.current.title))
+                    Music.songs.put(Music.current)
+
+#If queue shouldnt be looped or no arguments then
+                elif Music.repeat == 'off':
+                    Music.current = await Music.songs.get()
+                    ctx.voice_client.play(Music.current, after = Music.toggle_next)
+                    await ctx.send('Now playing: {}'.format(Music.current.title))
+
+#Pause loop for 10 seconds to let other commands through
+            await asyncio.sleep(10)
 
 #Stop playing
     @commands.command()
@@ -199,7 +218,7 @@ class Music(commands.Cog, discord.Client):
     async def queue(self,ctx):
         async with ctx.typing():
             if Music.songs.qsize() == 0:
-                await ctx.send('No songs in queue')
+                await ctx.send('Queue is empty')
             else:
                 for i in range (0, Music.songs.qsize()):   
                     q = await Music.songs.get()
@@ -208,11 +227,12 @@ class Music(commands.Cog, discord.Client):
 
 #Repeat the queue
     @commands.command()
-    async def loop(self, ctx, repeat):
-        if repeat == 'on':
+    async def loop(self, ctx):
+        if Music.repeat == 'off':
             repeat = 'on' 
+            await Music.songs.put(Music.current)
             await ctx.send('Queue will now repeat')
-        elif repeat == 'off':
+        elif repeat == 'on':
             repeat == 'off'
             await ctx.send('Queue will not repeat now')
 
@@ -235,42 +255,10 @@ class Music(commands.Cog, discord.Client):
             print('Still Connected')
 
 
-class MusicClient(discord.Client):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)   
-#Creating music background task
-        self.bg_task = self.loop.create_task(self.music_background_task())
-
-    async def music_background_task(self):
-        await self.wait_until_ready()
-        print('Music is Ready')
-        counter = 0       
-        while not self.is_closed():
-            counter += 1
-            print('Counting {}'.format(counter))
-            await Music.go(Music)
-            await asyncio.sleep(1)
-
 self_bot = False
 
-
 #Add music cog
-music_client = MusicClient()
 bot.add_cog(Music(bot))
-
-#Bot login status
-@bot.event
-async def on_ready():
-    print('Logged in as')
-    print(bot.user.name)
-    print(bot.user.id)
-    print('------')
-#Update bot activity status
-    activity = discord.Activity(name='over Kingar Nugar', type=discord.ActivityType.watching)
-    await bot.change_presence(activity=activity)
-#Run music client
-    await music_client.start('NTk0NTQ3MDI5ODE3MDMyNzI1.XSh_7Q.O3JZ7T9VGKHnwE2SQmJcIcFZ5E0')
-    
 
 #Run bot (String is bot token)
 #Fake token here because repo is public
