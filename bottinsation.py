@@ -229,11 +229,11 @@ class Music(commands.Cog, discord.Client):
     @commands.command()
     async def loop(self, ctx):
         if Music.repeat == 'off':
-            repeat = 'on' 
+            Music.repeat = 'on' 
             await Music.songs.put(Music.current)
             await ctx.send('Queue will now repeat')
         elif repeat == 'on':
-            repeat == 'off'
+            Music.repeat == 'off'
             await ctx.send('Queue will not repeat now')
 
 #Disconnect from voice channel 
@@ -262,4 +262,4 @@ bot.add_cog(Music(bot))
 
 #Run bot (String is bot token)
 #Fake token here because repo is public
-bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XSh_7Q.O3JZ7T9VGKHnwE2SQmJcIcFZ5E0')
+bot.run('fake')
