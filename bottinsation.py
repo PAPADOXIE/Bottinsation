@@ -49,7 +49,7 @@ async def on_ready():
     print(bot.user.id)
     print('------')
 #Update bot activity status
-    activity = discord.Activity(name='over Kingar Nugar', type=discord.ActivityType.watching)
+    activity = discord.Activity(name='you', type=discord.ActivityType.watching)
     await bot.change_presence(activity=activity)
 
 #MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC MISC
@@ -183,8 +183,9 @@ class Music(commands.Cog, discord.Client):
 
 #Check whether to skip current song or not
             if Music.skip == True:
-                ctx.voice_client.stop()
-                Music.skip == False
+                ctx.voice_client.pause()
+                await ctx.send('Skipped {}'.format(Music.current.title))
+                Music.skip = False
 
 #Check whether anything is playing or not
             if not ctx.voice_client.is_playing():
@@ -195,7 +196,7 @@ class Music(commands.Cog, discord.Client):
                     Music.current = await Music.songs.get()
                     ctx.voice_client.play(Music.current, after = Music.toggle_next)
                     await ctx.send('Now playing: {}'.format(Music.current.title))
-                    Music.songs.put(Music.current)
+                    await Music.songs.put(Music.current)
 
 #If queue shouldnt be looped or no arguments then
                 elif Music.repeat == False:
@@ -249,6 +250,7 @@ class Music(commands.Cog, discord.Client):
     async def clear(self, ctx):
         while Music.songs.qsize() != 0:
             await Music.songs.get()
+        ctx.voice_client.stop()
         await ctx.send('Queue has been cleared') 
 
 #Skip a song
@@ -282,4 +284,4 @@ bot.add_cog(Music(bot))
 
 #Run bot (String is bot token)
 #Fake token here because repo is public
-bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XSvIOw.h18AKvYGxmiebLMdfYUlBOR4ySo')
+bot.run('fake')
