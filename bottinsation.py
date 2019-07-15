@@ -232,7 +232,7 @@ class Music(commands.Cog, discord.Client):
             Music.repeat = 'on' 
             await Music.songs.put(Music.current)
             await ctx.send('Queue will now repeat')
-        elif repeat == 'on':
+        elif Music.repeat == 'on':
             Music.repeat == 'off'
             await ctx.send('Queue will not repeat now')
 
