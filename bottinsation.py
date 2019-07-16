@@ -145,19 +145,13 @@ class Music(commands.Cog, discord.Client):
         self.bot = bot
 
 #Creating song queue
-    songs = asyncio.Queue()
+    songs = []
 #Creating event to switch to next song
     play_next_song = asyncio.Event()
 #Tag for looping queue
     repeat = False
 #Tag for skipping a song
     skip = False
-#Currently playing song
-    current = ''
-
- #Point to next song   
-    def toggle_next():
-        bot.loop.call_soon_threadsafe(play_next_song.set)
 
 #Move bot to voice channel where the user who initiated command is
     @commands.command()
@@ -171,41 +165,57 @@ class Music(commands.Cog, discord.Client):
     @commands.command()
     async def play(self, ctx, *, url):
 
+#Flag used to check whether or no to start Music.go
+        start_flag = True
+
         async with ctx.typing():
             player = await YTDLSource.from_url(url, loop = self.bot.loop)
-            await Music.songs.put(player)
+            self.songs.append(player)
             
         await ctx.send('Added : {} to the queue'.format(player.title))
         print('Added : {} to the queue'.format(player.title))
 
+#Only call Music.go once 
+        if start_flag == True:
+            start_flag = False
+            await self.go(ctx)
+
+#Music Task which will play music
+    async def go(self, ctx):
+
 #Loop which checks for a song to play and plays if there is one
-        while Music.songs.qsize() != 0:
+        while True:
 
 #Check whether to skip current song or not
-            if Music.skip == True:
-                ctx.voice_client.pause()
-                await ctx.send('Skipped {}'.format(Music.current.title))
-                Music.skip = False
+            if self.skip == True:
+                ctx.voice_client.stop()
+                await ctx.send('Skipped')
+                print('Skipped a song')
+                self.skip = False
 
 #Check whether anything is playing or not
             if not ctx.voice_client.is_playing():
+                ctx.voice_client.stop()
 
 #Checks whether to loop the queue or not
 #If queue should be looped then
-                if Music.repeat == True:
-                    Music.current = await Music.songs.get()
-                    ctx.voice_client.play(Music.current, after = Music.toggle_next)
-                    await ctx.send('Now playing: {}'.format(Music.current.title))
-                    await Music.songs.put(Music.current)
+                if self.repeat == True:
+                    current = self.songs.pop()
+                    player = await YTDLSource.from_url(current.title)
+                    ctx.voice_client.play(player)
+                    await ctx.send('Now playing: {}'.format(current.title))
+                    self.songs.reverse()
+                    self.songs.append(current)
 
 #If queue shouldnt be looped or no arguments then
-                elif Music.repeat == False:
-                    Music.current = await Music.songs.get()
-                    ctx.voice_client.play(Music.current, after = Music.toggle_next)
-                    await ctx.send('Now playing: {}'.format(Music.current.title))
+                elif self.repeat == False:
+                    current = self.songs.pop()
+                    ctx.voice_client.play(current)
+                    await ctx.send('Now playing: {}'.format(self.current.title))
 
 #Pause loop for 10 seconds to let other commands through
-            await asyncio.sleep(10)
+            await asyncio.sleep(2)
+
 
 #Stop playing
     @commands.command()
@@ -220,36 +230,32 @@ class Music(commands.Cog, discord.Client):
 #Resume playing 
     @commands.command()
     async def resume(self,ctx):
-        await ctx.voice_client.resume()
+        ctx.voice_client.resume()
 
 #Show queue
     @commands.command()
     async def queue(self,ctx):
         async with ctx.typing():
-            if Music.songs.qsize() == 0:
+            if len(self.songs) == 0:
                 await ctx.send('Queue is empty')
             else:
-                for i in range (0, Music.songs.qsize()):   
-                    q = await Music.songs.get()
-                    await ctx.send('{} : {}'.format(i+1, q.title))
-                    await Music.songs.put(q)
+                for i in range (0, len(self.songs)):   
+                    await ctx.send('{} : {}'.format(i+1, self.songs[i].title))
 
 #Repeat the queue
     @commands.command()
     async def loop(self, ctx):
-        if Music.repeat == False:
-            Music.repeat = True 
-            await Music.songs.put(Music.current)
+        if self.repeat == False:
+            self.repeat = True
             await ctx.send('Queue will now repeat')
-        elif Music.repeat == True:
-            Music.repeat == False
+        elif self.repeat == True:
+            self.repeat = False
             await ctx.send('Queue will not repeat now')
 
 #Clear the queue
     @commands.command()
     async def clear(self, ctx):
-        while Music.songs.qsize() != 0:
-            await Music.songs.get()
+        self.songs.clear()
         ctx.voice_client.stop()
         await ctx.send('Queue has been cleared') 
 
@@ -284,4 +290,4 @@ bot.add_cog(Music(bot))
 
 #Run bot (String is bot token)
 #Fake token here because repo is public
-bot.run('fake')
+bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XSwNVA.4ZxzO3xzZAlgV8UfgnJaN9vJWFU')
