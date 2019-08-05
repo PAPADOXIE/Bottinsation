@@ -165,9 +165,6 @@ class Music(commands.Cog, discord.Client):
     @commands.command()
     async def play(self, ctx, *, url):
 
-#Flag used to check whether or no to start Music.go
-        start_flag = True
-
         async with ctx.typing():
             player = await YTDLSource.from_url(url, loop = self.bot.loop)
             self.songs.append(player)
@@ -175,13 +172,6 @@ class Music(commands.Cog, discord.Client):
         await ctx.send('Added : {} to the queue'.format(player.title))
         print('Added : {} to the queue'.format(player.title))
 
-#Only call Music.go once 
-        if start_flag == True:
-            start_flag = False
-            await self.go(ctx)
-
-#Music Task which will play music
-    async def go(self, ctx):
 
 #Loop which checks for a song to play and plays if there is one
         while True:
@@ -237,7 +227,7 @@ class Music(commands.Cog, discord.Client):
     async def queue(self,ctx):
         async with ctx.typing():
             if len(self.songs) == 0:
-                return await ctx.send('Queue is empty')
+                await ctx.send('Queue is empty')
             else:
                 for i in range (0, len(self.songs)):   
                     await ctx.send('{} : {}'.format(i+1, self.songs[i].title))
@@ -262,8 +252,7 @@ class Music(commands.Cog, discord.Client):
 #Skip a song
     @commands.command()
     async def skip(self, ctx):
-        ctx.voice_client.stop()
-        Music.skip = True
+        self.skip = True
 
 #Disconnect from voice channel 
     @commands.command()
