@@ -139,7 +139,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
         filename = data['url'] if stream else ytdl.prepare_filename(data)
         return cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)
 
-#Class for accepting music c ommands and initializing bot for music 
+#Class for accepting music commands and initializing bot for music 
 class Music(commands.Cog, discord.Client):
     def __init__(self, bot):
         self.bot = bot
@@ -237,7 +237,7 @@ class Music(commands.Cog, discord.Client):
     async def queue(self,ctx):
         async with ctx.typing():
             if len(self.songs) == 0:
-                await ctx.send('Queue is empty')
+                return await ctx.send('Queue is empty')
             else:
                 for i in range (0, len(self.songs)):   
                     await ctx.send('{} : {}'.format(i+1, self.songs[i].title))
@@ -250,7 +250,7 @@ class Music(commands.Cog, discord.Client):
             await ctx.send('Queue will now repeat')
         elif self.repeat == True:
             self.repeat = False
-            await ctx.send('Queue will not repeat now')
+            await ctx.send('Queue will not repeat')
 
 #Clear the queue
     @commands.command()
@@ -262,6 +262,7 @@ class Music(commands.Cog, discord.Client):
 #Skip a song
     @commands.command()
     async def skip(self, ctx):
+        ctx.voice_client.stop()
         Music.skip = True
 
 #Disconnect from voice channel 
@@ -290,4 +291,4 @@ bot.add_cog(Music(bot))
 
 #Run bot (String is bot token)
 #Fake token here because repo is public
-bot.run('NTk0NTQ3MDI5ODE3MDMyNzI1.XSwNVA.4ZxzO3xzZAlgV8UfgnJaN9vJWFU')
+bot.run('fake')
