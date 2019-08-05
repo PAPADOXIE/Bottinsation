@@ -97,7 +97,7 @@ youtube_dl.utils.bug_reports_message = lambda: ''
 #Format options for youtube_dl
 ytdl_format_options = {
     'format': 'bestaudio/best',
-    'outtmpl': '%(extractor)s-%(id)s-%(title)s.%(ext)s',
+    'outtmpl': '%(title)s.%(ext)s',
     'restrictfilenames': True,
     'noplaylist': False,
     'nocheckcertificate': True,
@@ -191,17 +191,19 @@ class Music(commands.Cog, discord.Client):
 #If queue should be looped then
                 if self.repeat == True:
                     current = self.songs.pop()
-                    player = await YTDLSource.from_url(current.title)
+                    await self.delete(ctx, current)
+                    player = await YTDLSource.from_url(current.title, loop = self.bot.loop)
                     ctx.voice_client.play(player)
-                    await ctx.send('Now playing: {}'.format(current.title))
+                    await ctx.send('Now playing: {}'.format(player.title))
                     self.songs.reverse()
-                    self.songs.append(current)
+                    self.songs.append(player)
+                    self.songs.reverse()
 
 #If queue shouldnt be looped or no arguments then
                 elif self.repeat == False:
                     current = self.songs.pop()
                     ctx.voice_client.play(current)
-                    await ctx.send('Now playing: {}'.format(self.current.title))
+                    await ctx.send('Now playing: {}'.format(current.title))
 
 #Pause loop for 10 seconds to let other commands through
             await asyncio.sleep(2)
@@ -259,6 +261,18 @@ class Music(commands.Cog, discord.Client):
     async def leave(self, ctx):
         await ctx.voice_client.disconnect()
 
+#Remove song files from computer after song is done playing
+    async def delete(self, ctx, current):
+        if not ctx.voice_client.is_playing():
+#Try to delete the .webm file
+            try:
+                await os.remove('{}.webm'.format(current.filename))
+#If format is not .webm then try .m4a
+            except:    
+                await os.remove('{}.m4a'.format(current.filename))
+            finally:
+                print('Couldnt delete file')
+
 #Dont play when user isn't connected to voice channel
 #Stop playing when no one is connected to the voice channel
     @play.before_invoke
@@ -271,7 +285,7 @@ class Music(commands.Cog, discord.Client):
                 raise commands.CommandError("Author not connected to a voice channel.")
         elif ctx.voice_client.is_playing():
             print('Still Connected')
-
+        
 
 self_bot = False
 
